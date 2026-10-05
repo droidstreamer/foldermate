@@ -16,6 +16,7 @@ A big vault turns the file explorer into a wall of identical grey rows. FolderMa
 - **Notes sit on their folder's color.** An optional soft block behind a folder's contents shows what belongs where.
 - **Make it yours.** Your own palette, depth fade, bold folder names, indent lines, file name color and active-note colors.
 - **Works with light and dark themes.**
+- **Searchable settings.** Find any FolderMate option from Obsidian's settings search.
 
 ![Right-click a folder, pick a color](docs/images/2-right-click.png)
 
@@ -40,7 +41,8 @@ If you use another plugin that colors the file explorer, turn it off. Both would
 - **No network, no telemetry.** It also has no runtime dependencies.
 - **Folder paths only.** It reads folder paths and never opens a note's contents.
 - **Checked colors.** A color must be a valid `#RRGGBB` value before it reaches the page.
-- **Desktop only.**
+- **Desktop only.** Needs Obsidian 1.13 or later.
+- **Signed releases.** Every release is built by GitHub Actions from this repository and carries a [build provenance attestation](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations).
 
 ## Support
 

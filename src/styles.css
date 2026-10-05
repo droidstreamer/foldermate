@@ -40,11 +40,11 @@ body .nav-files-container .nav-folder.tt-block > .nav-folder-children::before {
   content: ''; position: absolute; top: 0; bottom: 2px; left: var(--tt-block-left); right: 0;
   border-radius: 6px; pointer-events: none; background: color-mix(in srgb, var(--tt-block-bg) var(--tt-block-alpha), var(--background-secondary));
 }
-body.tt-noguides .nav-files-container .nav-folder-children { border-inline-start-color: transparent !important; }
+body.tt-noguides .nav-files-container .nav-folder .nav-folder-children { border-inline-start-color: transparent; }
 /* Indent lines: thickness is an inset shadow in the line's own color (the border keeps its width so rows never shift), and a colored
    folder's line starts at the bottom of its band, through the 2px gap, so the two connect. */
 body:not(.tt-noguides) .nav-files-container .nav-folder-children { box-shadow: inset var(--tt-line-w, 0px) 0 0 var(--nav-indentation-guide-color); }
-body:not(.tt-noguides) .nav-files-container .nav-folder:has(> .nav-folder-title.tt-bg) > .nav-folder-children { margin-top: -2px; padding-top: 2px; }
+body:not(.tt-noguides) .nav-files-container .nav-folder.tt-banded > .nav-folder-children { margin-top: -2px; padding-top: 2px; }
 /* File names (setting "File text color"); the open note keeps its own row colors. */
 body.tt-file-text .nav-files-container .nav-file-title:not(.is-active),
 body.tt-file-text .nav-files-container .nav-file-title:not(.is-active) .nav-file-title-content { color: var(--tt-file-text); }
@@ -61,19 +61,21 @@ body.tt-file-text .nav-files-container .nav-file-title:not(.is-active) .nav-file
 .tt-row { display: flex; align-items: center; gap: 4px; }
 .tt-color .tt-hex { width: 96px; font-family: var(--font-monospace); }
 .tt-color .tt-hsl-track { -webkit-appearance: none; appearance: none; width: 100%; height: 12px; margin: 0; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--background-modifier-border); }
-/* Obsidian's own slider rules (input[type=range]::-webkit-slider-thumb, plus :hover and :active) outrank a class: they lifted the knob by
-   --slider-thumb-y (meant for its 6px track) and thinned the track. Pinned with !important: Obsidian's white knob, centred on the 12px track. */
-input.tt-hsl-track::-webkit-slider-runnable-track { background: transparent !important; height: 12px !important; }
-input.tt-hsl-track::-webkit-slider-thumb {
-  -webkit-appearance: none; box-sizing: border-box; width: 18px !important; height: 18px !important; margin-top: -3px !important; top: 0 !important;
-  border-radius: 50%; cursor: pointer;
+/* Obsidian sizes and lifts its slider knob through variables (meant for its 6px track); set them here so its white knob sits centred
+   on the 12px track, also while hovered or dragged. */
+.tt-color input.tt-hsl-track {
+  --slider-thumb-width: 18px; --slider-thumb-height: 18px; --slider-thumb-width-active: 18px; --slider-thumb-height-active: 18px;
+  --slider-thumb-y: -3px; --slider-thumb-y-active: -3px; --slider-thumb-radius: 50%;
 }
+.tt-color input.tt-hsl-track::-webkit-slider-runnable-track { background: transparent; height: 12px; }
+.tt-color input.tt-hsl-track::-webkit-slider-thumb { box-sizing: border-box; cursor: pointer; }
 .tt-color .tt-reset { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; margin-left: auto; background: transparent; box-shadow: none; color: var(--text-muted); cursor: pointer; }
 .tt-color .tt-reset:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
 
-/* Active note row (user colors; classes are set on <body> only when a color is chosen). Obsidian's reveal flash (yellow, !important) would show first, so it is overridden here. */
+/* Active note row (user colors; classes are set on <body> only when a color is chosen). Obsidian's reveal flash paints --text-highlight-bg
+   (yellow) and would show first, so that variable takes the active color on the active row. */
 body:is(.tt-active-bg, .tt-active-text) .nav-files-container .tree-item-self.is-active { animation: none; transition: none; }
-body.tt-active-bg .nav-files-container .tree-item-self.is-active.is-flashing:not(.tt-bg) { background-color: var(--tt-active-bg) !important; mix-blend-mode: normal; }
+body.tt-active-bg .nav-files-container .tree-item-self.is-active.is-flashing:not(.tt-bg) { --text-highlight-bg: var(--tt-active-bg); --highlight-mix-blend-mode: normal; }
 body.tt-active-bg .nav-files-container .tree-item-self.is-active:not(.tt-bg) { background-color: var(--tt-active-bg); }
 body.tt-active-text .nav-files-container .tree-item-self.is-active:not(.tt-text),
 body.tt-active-text .nav-files-container .tree-item-self.is-active:not(.tt-text) .tree-item-inner { color: var(--tt-active-text); }
@@ -94,8 +96,15 @@ body.tt-active-text .nav-files-container .tree-item-self.is-active:not(.tt-text)
 .tt-palette-box > .setting-item { margin-top: 4px; }
 .tt-palette { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8px; }
 .tt-palette .setting-item { margin: 0; }
-.tt-dim.is-disabled { opacity: 0.45; } /* grayed out: the theme alone barely shows it */
+.tt-settings .setting-item.is-disabled { opacity: 0.45; } /* grayed out: the theme alone barely shows it */
 .tt-sub { margin-inline-start: 18px; padding-inline-start: 12px; border-inline-start: 2px solid var(--background-modifier-border); }
 .tt-palette .setting-item-info { display: none; }
 .tt-palette .setting-item-control { justify-content: flex-start; }
 .tt-palette .setting-item-control input[type=text] { flex: 1; min-width: 0; }
+/* Header and palette are whole rows inside Obsidian's setting groups (declarative settings): the group card is their box, so they
+   drop their own border and background, and the palette's inner rows lose the group's padding and divider lines. */
+.tt-settings .setting-item.tt-about-row, .tt-settings .setting-item.tt-palette-row { display: block; }
+.tt-settings .tt-about-row .tt-about { margin: 0; padding: 0; border: 0; }
+.tt-settings .tt-palette-row .tt-palette-box { padding: 0; background: none; }
+.tt-settings .setting-group .tt-palette-box .setting-item { padding: 6px 4px; }
+.tt-settings .setting-group .tt-palette-box .setting-item::before { content: none; }

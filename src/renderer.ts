@@ -40,7 +40,7 @@ export class Renderer {
 
   private schedule() {
     if (this.frame) return
-    this.frame = requestAnimationFrame(() => { this.frame = 0; for (const el of this.observers.keys()) this.paint(el) })
+    this.frame = window.requestAnimationFrame(() => { this.frame = 0; for (const el of this.observers.keys()) this.paint(el) })
   }
 
   // Explorer-wide settings and active-note colors go on <body>; styles.css reads the colors only while their class is set.
@@ -81,6 +81,7 @@ export class Renderer {
         row.style.setProperty('--tt-color', hex)
       } else {
         row.classList.add('tt-text', 'tt-bg')
+        row.parentElement?.classList.add('tt-banded') // styles.css: the indent line joins the band
         row.style.setProperty('--tt-left', left + 'px')
         row.style.setProperty('--tt-color', text)
         row.style.setProperty('--tt-bg', hex)
@@ -114,6 +115,7 @@ export class Renderer {
 
   private clear(row: HTMLElement, forget = true) {
     row.classList.remove(...CLASSES)
+    if (row.matches(ROW)) row.parentElement?.classList.remove('tt-banded')
     if (row.matches(ROW) && forget) { row.parentElement?.style.removeProperty(GUIDE); this.noBlock(row.parentElement) }
     for (const p of PROPS) row.style.removeProperty(p)
     if (forget) this.sig.delete(row)
@@ -123,7 +125,7 @@ export class Renderer {
   stop() {
     document.body.classList.remove('tt-active-bg', 'tt-active-text', 'tt-bold', 'tt-noguides', 'tt-file-text')
     for (const p of ['--tt-active-bg', '--tt-active-text', '--tt-file-text', '--tt-line-w']) document.body.style.removeProperty(p)
-    cancelAnimationFrame(this.frame)
+    window.cancelAnimationFrame(this.frame)
     this.frame = 0
     for (const [el, ob] of this.observers) {
       ob.disconnect()

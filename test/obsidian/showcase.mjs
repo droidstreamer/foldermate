@@ -126,7 +126,7 @@ const box = await sv(`const c = document.querySelector('.vertical-tab-content'),
   return { x: r.x + 24, w: r.width - 48, top: r.y + 8, fade: at('Fade background by depth').bottom, act: at('Active note').top, actEnd: at('Palette').top, pal: at('Palette').top, end: add.bottom }`)
 const sgrab = async (name, y0, y1) => { const r = await scall('Page.captureScreenshot', { format: 'png', clip: { x: box.x - 12, y: y0, width: box.w + 24, height: y1 - y0, scale: 1 } })
   writeFileSync(`${OUT}/raw/${name}.png`, Buffer.from(r.data, 'base64')); return `data:image/png;base64,${r.data}` }
-const head = await sgrab('settings-top', box.top, box.fade + 14), act = await sgrab('settings-active', box.act - 8, box.actEnd - 4), pal = await sgrab('settings-palette', box.pal - 8, box.end + 16)
+const head = await sgrab('settings-top', box.top, box.fade + 14), act = await sgrab('settings-active', box.act - 8, box.actEnd - 4), pal = await sgrab('settings-palette', box.pal - 8, box.end + 30)
 sws.close(); await ev(`app.setting.close(); return 1`)
 await compose('5-settings', 'violet', 'Make it yours.',
   'Your own palette, depth fade, bold names, active-note colors. Nothing in your notes ever changes.',

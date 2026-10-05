@@ -2,6 +2,13 @@
 
 Newest first. Plugin settings do not show this list; it lives here (and on the USB) and on the plugin's details page.
 
+## 1.0.2
+- **Settings are searchable:** FolderMate's settings now show up when you search in Obsidian's Settings (for example "indent line"). Needs Obsidian 1.13 or later.
+- **Works in pop-out windows:** explorer colors repaint correctly in Obsidian's pop-out windows too.
+- **Cleaner styles:** the styles no longer force-override Obsidian's own (no `!important`, no slow `:has` selector). They set Obsidian's own style values instead, so themes have an easier time and the explorer redraws faster.
+- **Signed releases:** each release is now built on GitHub and comes with a provenance attestation, which proves the files were built from this repository's code.
+- **Up to date with Obsidian's API:** replaced deprecated calls flagged by the community directory review.
+
 ## 1.0.1
 - **Ready for the community directory:** the plugin ID is now `foldermate` (was `tint-tree`), to match its name. If you installed an earlier build, rename `.obsidian/plugins/tint-tree` to `foldermate` and turn the plugin on again. Your colors and settings come along.
 - **Support link:** the manifest now carries the Buy Me a Coffee link, so Obsidian shows a support button on the plugin's page.
