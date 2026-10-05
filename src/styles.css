@@ -1,0 +1,101 @@
+.tt-modal-row { display: flex; align-items: center; gap: 10px; width: 100%; margin-bottom: 6px; justify-content: flex-start; }
+.tt-modal-row .tt-swatch { width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--background-modifier-border); }
+
+/* Explorer rows. Text color (also the caret and icon, which stroke currentColor). */
+body .nav-files-container .nav-folder-title.tt-text,
+body .nav-files-container .nav-folder-title.tt-text .nav-folder-title-content { color: var(--tt-color); }
+/* The caret takes its color from Obsidian's own variable, not from currentColor. */
+body .nav-files-container .nav-folder-title.tt-text {
+  --nav-collapse-icon-color: var(--tt-color);
+  --nav-collapse-icon-color-collapsed: var(--tt-color);
+}
+
+/* Background mode. The band is a pseudo-element so every depth gets the same look: full row height, rounded,
+   flush right, starting at the caret (--tt-left, set by the renderer) so the indent lines stay outside it.
+   The row's own 2px bottom margin keeps neighbouring bands apart. */
+body .nav-files-container .nav-folder-title.tt-bg {
+  isolation: isolate;
+  margin-bottom: max(var(--nav-item-margin-bottom, 0px), 2px);
+}
+body .nav-files-container .nav-folder-title.tt-bg::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: var(--tt-left, 0px);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--tt-bg) var(--tt-alpha), var(--background-secondary)); /* opaque: a faded band shows its own strength on top of a parent's block */
+}
+body .nav-files-container .nav-folder-title.tt-bg:hover { filter: brightness(1.15); }
+body .nav-files-container .nav-folder-title.tt-bg.is-active::before { box-shadow: inset 0 0 0 2px var(--text-accent); }
+body .nav-files-container .nav-folder-title.tt-bg.is-being-dragged-over { outline: 2px dashed var(--text-accent); }
+
+/* Bold folder names. Contents block (renderer sets its left edge on the folder): one rounded block under a colored folder's open
+   children, mixed with the explorer background so it is opaque and a nested folder's block covers its parent's. The Indent lines toggle off hides every line. */
+body.tt-bold .nav-files-container .nav-folder-title-content { font-weight: var(--font-bold); }
+body .nav-files-container .nav-folder.tt-block > .nav-folder-children { position: relative; }
+body .nav-files-container .nav-folder.tt-block > .nav-folder-children::before {
+  content: ''; position: absolute; top: 0; bottom: 2px; left: var(--tt-block-left); right: 0;
+  border-radius: 6px; pointer-events: none; background: color-mix(in srgb, var(--tt-block-bg) var(--tt-block-alpha), var(--background-secondary));
+}
+body.tt-noguides .nav-files-container .nav-folder-children { border-inline-start-color: transparent !important; }
+/* Indent lines: thickness is an inset shadow in the line's own color (the border keeps its width so rows never shift), and a colored
+   folder's line starts at the bottom of its band, through the 2px gap, so the two connect. */
+body:not(.tt-noguides) .nav-files-container .nav-folder-children { box-shadow: inset var(--tt-line-w, 0px) 0 0 var(--nav-indentation-guide-color); }
+body:not(.tt-noguides) .nav-files-container .nav-folder:has(> .nav-folder-title.tt-bg) > .nav-folder-children { margin-top: -2px; padding-top: 2px; }
+/* File names (setting "File text color"); the open note keeps its own row colors. */
+body.tt-file-text .nav-files-container .nav-file-title:not(.is-active),
+body.tt-file-text .nav-files-container .nav-file-title:not(.is-active) .nav-file-title-content { color: var(--tt-file-text); }
+
+/* Color picker, the same look as MindmapMate's: a swatch button opens a popover under the setting. */
+.tt-color { position: relative; }
+.tt-color .tt-swatch { flex: none; width: 22px; height: 22px; min-width: 22px; padding: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--background-modifier-border); }
+.tt-pop {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 10; padding: 12px;
+  border: 1px solid var(--background-modifier-border); border-radius: var(--radius-m);
+  background: var(--background-primary); box-shadow: var(--shadow-l);
+}
+.tt-hsl { display: flex; flex-direction: column; gap: 10px; width: 216px; }
+.tt-row { display: flex; align-items: center; gap: 4px; }
+.tt-color .tt-hex { width: 96px; font-family: var(--font-monospace); }
+.tt-color .tt-hsl-track { -webkit-appearance: none; appearance: none; width: 100%; height: 12px; margin: 0; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--background-modifier-border); }
+/* Obsidian's own slider rules (input[type=range]::-webkit-slider-thumb, plus :hover and :active) outrank a class: they lifted the knob by
+   --slider-thumb-y (meant for its 6px track) and thinned the track. Pinned with !important: Obsidian's white knob, centred on the 12px track. */
+input.tt-hsl-track::-webkit-slider-runnable-track { background: transparent !important; height: 12px !important; }
+input.tt-hsl-track::-webkit-slider-thumb {
+  -webkit-appearance: none; box-sizing: border-box; width: 18px !important; height: 18px !important; margin-top: -3px !important; top: 0 !important;
+  border-radius: 50%; cursor: pointer;
+}
+.tt-color .tt-reset { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; margin-left: auto; background: transparent; box-shadow: none; color: var(--text-muted); cursor: pointer; }
+.tt-color .tt-reset:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
+
+/* Active note row (user colors; classes are set on <body> only when a color is chosen). Obsidian's reveal flash (yellow, !important) would show first, so it is overridden here. */
+body:is(.tt-active-bg, .tt-active-text) .nav-files-container .tree-item-self.is-active { animation: none; transition: none; }
+body.tt-active-bg .nav-files-container .tree-item-self.is-active.is-flashing:not(.tt-bg) { background-color: var(--tt-active-bg) !important; mix-blend-mode: normal; }
+body.tt-active-bg .nav-files-container .tree-item-self.is-active:not(.tt-bg) { background-color: var(--tt-active-bg); }
+body.tt-active-text .nav-files-container .tree-item-self.is-active:not(.tt-text),
+body.tt-active-text .nav-files-container .tree-item-self.is-active:not(.tt-text) .tree-item-inner { color: var(--tt-active-text); }
+
+/* Preferences header, the same as MindmapMate's and LevelMate's: name, version and author, what it does, tip, coffee button, then a divider. */
+.tt-about { margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--background-modifier-border); }
+.tt-about-name { font-size: var(--font-ui-large); font-weight: var(--font-bold); color: var(--text-normal); }
+.tt-about-title { color: var(--text-faint); font-size: var(--font-ui-smaller); }
+.tt-about p { margin: 6px 0 10px; color: var(--text-muted); }
+.tt-about-tip { text-align: left; color: var(--text-muted); margin: 1.2em 0 10px; }
+.tt-about-footer { display: flex; align-items: center; justify-content: flex-end; gap: 10px; color: var(--text-faint); font-size: var(--font-ui-small); }
+.tt-coffee { display: inline-block; line-height: 0; }
+.tt-coffee img { height: 30px; width: auto; }
+
+/* Palette in two columns: each entry is name, swatch, trash, with no empty label area. */
+.tt-palette-box { padding: 8px; border-radius: var(--radius-m); background: var(--background-secondary); }
+.tt-palette-box .setting-item { background: none; border: 0; box-shadow: none; padding: 6px 8px; }
+.tt-palette-box > .setting-item { margin-top: 4px; }
+.tt-palette { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8px; }
+.tt-palette .setting-item { margin: 0; }
+.tt-dim.is-disabled { opacity: 0.45; } /* grayed out: the theme alone barely shows it */
+.tt-sub { margin-inline-start: 18px; padding-inline-start: 12px; border-inline-start: 2px solid var(--background-modifier-border); }
+.tt-palette .setting-item-info { display: none; }
+.tt-palette .setting-item-control { justify-content: flex-start; }
+.tt-palette .setting-item-control input[type=text] { flex: 1; min-width: 0; }

@@ -1,0 +1,28 @@
+{
+  "name": "foldermate",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Color folders and their subfolders in the Obsidian file explorer, as text or background bands",
+  "type": "module",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc --noEmit && node esbuild.config.mjs production && node scripts/scan-bundle.mjs",
+    "test": "vitest run",
+    "lint": "eslint src",
+    "obsidian:check": "node test/obsidian/check.mjs",
+    "obsidian:acceptance": "node test/obsidian/acceptance.mjs",
+    "showcase": "node test/obsidian/showcase.mjs",
+    "ship": "npm run build && node scripts/ship.mjs"
+  },
+  "author": "Droid",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "26.6.2",
+    "esbuild": "0.28.2",
+    "eslint": "10.11.0",
+    "obsidian": "1.13.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0",
+    "vitest": "5.0.1"
+  }
+}
