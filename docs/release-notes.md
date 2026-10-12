@@ -2,6 +2,10 @@
 
 Newest first. Plugin settings do not show this list; it lives here (and on the USB) and on the plugin's details page.
 
+## 1.1.0
+- **Background on by default:** new installs color folders with a background band at once. Existing setups keep their saved choice.
+- **Indent line opacity:** a new slider (10 to 100%) beside the indent line thickness, to make the lines fainter.
+
 ## 1.0.2
 - **Settings are searchable:** FolderMate's settings now show up when you search in Obsidian's Settings (for example "indent line"). Needs Obsidian 1.13 or later.
 - **Works in pop-out windows:** explorer colors repaint correctly in Obsidian's pop-out windows too.

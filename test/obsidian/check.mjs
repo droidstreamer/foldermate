@@ -117,7 +117,7 @@ const prefs = await ev(`const c = app.setting.activeTab.containerEl, g = c.query
   return { name: c.querySelector('.tt-about-name')?.textContent, title: c.querySelector('.tt-about-title')?.textContent, desc: !!c.querySelector('.tt-about p'),
     entries: items.length, sameRow: b.length === 2 && Math.abs(b[0].top - b[1].top) < 2 && b[1].left > b[0].right,
     round: [...c.querySelectorAll('button.tt-swatch')].every(x => getComputedStyle(x).borderRadius === '50%'), swatches: c.querySelectorAll('button.tt-swatch').length,
-    explorer: ['Bold folder names', 'Indent lines', 'Indent line thickness', 'Contents background opacity', 'Reveal the open note'].every(n => c.textContent.includes(n)) && !/Indent line opacity|Folder rails/.test(c.textContent),
+    explorer: ['Bold folder names', 'Indent lines', 'Indent line thickness', 'Indent line opacity', 'Contents background opacity', 'Reveal the open note'].every(n => c.textContent.includes(n)) && !/Folder rails/.test(c.textContent),
     fileMin: c.querySelector('.setting-item:has(.setting-item-name) input[type=range]') && [...c.querySelectorAll('.setting-item')].filter(x => x.offsetParent).find(s => /Contents background opacity/.test(s.textContent)).querySelector('input[type=range]').min,
     box: (() => { const bx = c.querySelector('.tt-palette-box'), add = bx && [...bx.querySelectorAll('button')].find(x => x.textContent === 'Add color'), last = g && g.lastElementChild; return !!add && !!last && bx.contains(add) && add.getBoundingClientRect().top - last.getBoundingClientRect().bottom > 2 && getComputedStyle(bx.closest('.setting-items') ?? bx).backgroundColor !== 'rgba(0, 0, 0, 0)' })() }`)
 const VER = JSON.parse(readFileSync(new URL('../../manifest.json', import.meta.url))).version
@@ -129,7 +129,7 @@ const hdr = await ev(`const c = app.setting.activeTab.containerEl, tip = c.query
 check('header matches MindmapMate: tip line, then "Made with care" beside the 30px coffee button, right-aligned', hdr.tip === 'If you enjoy this plugin, please consider a small tip, I would greatly appreciate it!' && hdr.tipLeft && hdr.end && hdr.order === 'SPAN:Made with care|A:' && hdr.imgH === 30 && hdr.below && hdr.href === 'https://buymeacoffee.com/droidstreamer', JSON.stringify(hdr))
 check('palette in two columns (M10)', prefs.entries >= 2 && prefs.sameRow, JSON.stringify(prefs))
 check('every swatch is round (M10)', prefs.swatches > 0 && prefs.round, prefs.swatches)
-check('Explorer section: Indent lines toggle replaces the two sliders, no rails (M11)', prefs.explorer)
+check('Explorer section: Indent lines toggle with thickness and opacity sliders, no rails (M11)', prefs.explorer)
 check('Contents background opacity slider reaches 0% (M11)', prefs.fileMin === '0', prefs.fileMin)
 check('palette rows and Add color share one box (M11)', prefs.box)
 // M11d (USB note): Indent lines and Contents background are one or the other: lines on grays the slider out and no blocks are drawn.
@@ -218,6 +218,12 @@ const j5 = await join()
 check('thickness slider thickens the line without shifting rows (M11e)', j5[0].w >= 4.5 && j1[0].w < 2 && j5.every((j, i) => j.left === j1[i].left), JSON.stringify([j1.map(j => j.w), j5.map(j => j.w), j5.map(j => j.left)]))
 await shot('m11e-lines-thick')
 await ev(`${F}.cfg.guideWidth = 1; ${F}.refresh(); return 1`)
+// M12: indent line opacity slider, background on by default.
+await ev(`${F}.cfg.guideWidth = 5; ${F}.cfg.guideAlpha = 40; ${F}.refresh(); await new Promise(r => setTimeout(r, 300)); return 1`)
+const al = await ev(`const k = document.querySelector('.nav-folder-title[data-path="Fixtures/Projects"]').parentElement.querySelector(':scope > .nav-folder-children'); return getComputedStyle(k).boxShadow`)
+const alpha = [0, 0, 0, parseFloat(al.match(/\/ ([0-9.]+)\)/)?.[1])]
+check('indent line opacity slider makes the line see-through (M12)', alpha?.length === 4 && Math.abs(alpha[3] - 0.4) < 0.05, al)
+await ev(`${F}.cfg.guideAlpha = 100; ${F}.cfg.guideWidth = 1; ${F}.refresh(); return 1`)
 const ft = () => ev(`return [...document.querySelectorAll('.nav-files-container .nav-file-title:not(.is-active)')].slice(0, 6).map(r => getComputedStyle(r.querySelector('.nav-file-title-content')).color)`)
 const ftOff = await ft()
 await ev(`Object.assign(${F}.cfg, { fileTextEnabled: true, fileText: '#FF8800' }); ${F}.refresh(); await new Promise(r => setTimeout(r, 300)); return 1`)

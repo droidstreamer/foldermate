@@ -15,6 +15,7 @@ export interface TintSettings {
   boldFolders: boolean
   guideLines: boolean // Obsidian's indent lines in the explorer
   guideWidth: number // indent line thickness in px, 1-5 (1 = Obsidian's thin line)
+  guideAlpha: number // indent line opacity, %, 10-100
   fileTextEnabled: boolean // file names take fileText; off = theme
   fileText: string
   fileAlpha: number // block under a colored folder's contents, % of its color, 0-100 (0 = off)
@@ -34,7 +35,7 @@ export const STARTER_PALETTE: PaletteEntry[] = [
 export const defaultSettings = (): TintSettings => ({
   schemaVersion: 1,
   palette: STARTER_PALETTE.map(e => ({ ...e })),
-  colorMode: 'text',
+  colorMode: 'background',
   textColor: '#FFFFFF',
   fadeEnabled: true,
   activeEnabled: false,
@@ -43,6 +44,7 @@ export const defaultSettings = (): TintSettings => ({
   boldFolders: false,
   guideLines: false,
   guideWidth: 1,
+  guideAlpha: 100,
   fileTextEnabled: false,
   fileText: '#D1D5DB',
   fileAlpha: 20,
@@ -81,6 +83,7 @@ export function sanitize(raw: unknown): TintSettings {
   if (typeof raw.fileTextEnabled === 'boolean') d.fileTextEnabled = raw.fileTextEnabled
   if (isHex(raw.fileText)) d.fileText = raw.fileText
   d.guideWidth = num(raw.guideWidth, 1, 5, d.guideWidth)
+  d.guideAlpha = num(raw.guideAlpha, 10, 100, d.guideAlpha)
   d.fileAlpha = num(raw.fileAlpha, 0, 100, d.fileAlpha)
   if (isObj(raw.folderColors)) {
     const ids = new Set(d.palette.map(e => e.id))

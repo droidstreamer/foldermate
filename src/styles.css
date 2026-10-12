@@ -43,7 +43,7 @@ body .nav-files-container .nav-folder.tt-block > .nav-folder-children::before {
 body.tt-noguides .nav-files-container .nav-folder .nav-folder-children { border-inline-start-color: transparent; }
 /* Indent lines: thickness is an inset shadow in the line's own color (the border keeps its width so rows never shift), and a colored
    folder's line starts at the bottom of its band, through the 2px gap, so the two connect. */
-body:not(.tt-noguides) .nav-files-container .nav-folder-children { box-shadow: inset var(--tt-line-w, 0px) 0 0 var(--nav-indentation-guide-color); }
+body:not(.tt-noguides) .nav-files-container .nav-folder-children { box-shadow: inset var(--tt-line-w, 0px) 0 0 color-mix(in srgb, var(--nav-indentation-guide-color) var(--tt-line-a, 100%), transparent); }
 body:not(.tt-noguides) .nav-files-container .nav-folder.tt-banded > .nav-folder-children { margin-top: -2px; padding-top: 2px; }
 /* File names (setting "File text color"); the open note keeps its own row colors. */
 body.tt-file-text .nav-files-container .nav-file-title:not(.is-active),

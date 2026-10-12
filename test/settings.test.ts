@@ -24,7 +24,10 @@ describe('sanitize', () => {
     expect(sanitize({ fileAlpha: 'x', guideLines: 'no' }).fileAlpha).toBe(20)
     expect(sanitize({ guideLines: 'no' }).guideLines).toBe(false)
   })
-  it('defaults to text mode', () => expect(defaultSettings().colorMode).toBe('text'))
+  it('defaults to background mode', () => expect(defaultSettings().colorMode).toBe('background'))
+  it('clamps guideAlpha to 10-100', () => {
+    expect([sanitize({ guideAlpha: 0 }).guideAlpha, sanitize({ guideAlpha: 500 }).guideAlpha, sanitize({ guideAlpha: 'x' }).guideAlpha]).toEqual([10, 100, 100])
+  })
 })
 
 import { addEntry, removeEntry, usageCount } from '../src/core/settings'

@@ -59,6 +59,8 @@ export class TintSettingTab extends PluginSettingTab {
         { name: 'Indent lines', desc: 'The thin vertical lines beside expanded folders. Off by default: the contents background shows what belongs where.', control: { type: 'toggle', key: 'guideLines' } },
         { name: 'Indent line thickness', desc: 'How thick the indent lines are, 1 to 5 px. Grayed out while Indent lines is off.',
           control: { type: 'slider', key: 'guideWidth', min: 1, max: 5, step: 1, displayFormat: v => `${v} px`, disabled: () => !s.guideLines } },
+        { name: 'Indent line opacity', desc: 'How see-through the indent lines are, 10 to 100%. Grayed out while Indent lines is off.',
+          control: { type: 'slider', key: 'guideAlpha', min: 10, max: 100, step: 5, displayFormat: v => `${v}%`, disabled: () => !s.guideLines } },
         { name: 'Contents background opacity', desc: 'Everything inside a colored folder sits on one rounded block of its color, starting at the folder\'s own left edge, so you can see which notes belong to which folder. 0% turns it off. Grayed out while Indent lines is on (one or the other).',
           control: { type: 'slider', key: 'fileAlpha', min: 0, max: 100, step: 5, displayFormat: v => `${v}%`, disabled: () => s.guideLines } },
         { name: 'Color file names', desc: 'Off: file names use the theme text color. On: every file name in the explorer uses the color below (the open note keeps its Active note colors).', control: { type: 'toggle', key: 'fileTextEnabled' } },

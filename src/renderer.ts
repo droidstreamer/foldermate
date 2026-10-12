@@ -51,6 +51,7 @@ export class Renderer {
     document.body.classList.toggle('tt-file-text', s.fileTextEnabled && isHex(s.fileText))
     document.body.style.setProperty('--tt-file-text', s.fileText)
     document.body.style.setProperty('--tt-line-w', s.guideWidth - 1 + 'px') // drawn inside the line's box, so layout never shifts
+    document.body.style.setProperty('--tt-line-a', s.guideAlpha + '%')
     for (const [key, cls, prop] of [['activeBg', 'tt-active-bg', '--tt-active-bg'], ['activeText', 'tt-active-text', '--tt-active-text']] as const) {
       const on = s.activeEnabled && isHex(s[key])
       document.body.classList.toggle(cls, on)
@@ -124,7 +125,7 @@ export class Renderer {
   // Remove everything the plugin added (FR-11).
   stop() {
     document.body.classList.remove('tt-active-bg', 'tt-active-text', 'tt-bold', 'tt-noguides', 'tt-file-text')
-    for (const p of ['--tt-active-bg', '--tt-active-text', '--tt-file-text', '--tt-line-w']) document.body.style.removeProperty(p)
+    for (const p of ['--tt-active-bg', '--tt-active-text', '--tt-file-text', '--tt-line-w', '--tt-line-a']) document.body.style.removeProperty(p)
     window.cancelAnimationFrame(this.frame)
     this.frame = 0
     for (const [el, ob] of this.observers) {
