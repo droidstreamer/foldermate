@@ -1,4 +1,4 @@
-import { Plugin, TFile, TFolder, debounce } from 'obsidian'
+import { Plugin, TFolder, debounce } from 'obsidian'
 import { ColorModal } from './colorModal'
 import { TintSettingTab } from './settings'
 import { Renderer } from './renderer'
@@ -26,10 +26,14 @@ export default class FolderMatePlugin extends Plugin {
       if (file instanceof TFolder && deleteKeys(this.cfg.folderColors, file.path)) this.changed()
     }))
     this.registerEvent(this.app.workspace.on('layout-change', () => this.refresh()))
-    // Obsidian's own "Reveal current file in navigation" (expands the parents, scrolls the note into view); not in the public API.
+    // The explorer's own auto-reveal (expands the parents, scrolls the note into view); not in the public API.
+    // Not revealInFolder: that makes the explorer the active pane, which stole typing from a new note's title (GitHub issue #1).
+    // Deferred so the explorer's own file-open handler has marked the new note as its active item first.
     this.registerEvent(this.app.workspace.on('file-open', file => {
       if (!file || !this.cfg.revealActive) return
-      for (const leaf of this.app.workspace.getLeavesOfType('file-explorer')) (leaf.view as { revealInFolder?: (f: TFile) => void }).revealInFolder?.(file)
+      window.setTimeout(() => {
+        for (const leaf of this.app.workspace.getLeavesOfType('file-explorer')) (leaf.view as { revealActiveFile?: () => void }).revealActiveFile?.()
+      }, 0)
     }))
 
     this.registerEvent(this.app.workspace.on('file-menu', (menu, file) => {

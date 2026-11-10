@@ -1,6 +1,6 @@
 {
   "name": "foldermate",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "description": "Color folders and their subfolders in the Obsidian file explorer, as text or background bands",
   "type": "module",

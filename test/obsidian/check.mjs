@@ -246,4 +246,22 @@ check('turning Color file names on shows the File text color picker (M11e)', u3.
 await ev(`[...app.setting.activeTab.containerEl.querySelectorAll('.setting-item')].filter(x => x.offsetParent).find(s => s.querySelector('.setting-item-name')?.textContent === 'Indent line thickness').scrollIntoView({ block: 'center' }); await new Promise(r => setTimeout(r, 200)); return 1`)
 await settingsShot('m11e-settings')
 await ev(`app.setting.close(); ${F}.cfg.fileTextEnabled = false; ${F}.refresh(); return 1`)
+
+// 1.1.1 (GitHub issue #1): with Reveal on, typing a new note's name (with spaces) must stay in the title, not jump to the explorer.
+await call('Emulation.setFocusEmulationEnabled', { enabled: true })
+const key = async k => { for (const type of ['keyDown', 'keyUp']) await call('Input.dispatchKeyEvent', type === 'keyDown' ? { type, key: k, code: 'Space', text: k, windowsVirtualKeyCode: 32 } : { type, key: k, code: 'Space', windowsVirtualKeyCode: 32 }) }
+// The symptom is a race (Obsidian refocuses the title a few ms later, and wins on Linux), so also catch the cause: the explorer must never become the active pane.
+await ev(`const ws = app.workspace; window.__feActive = 0; window.__sal ??= ws.setActiveLeaf; ws.setActiveLeaf = function (l, p) { if (l?.view?.getViewType() === 'file-explorer') __feActive++; return __sal.call(this, l, p) }; return 1`)
+const newNote = []
+for (let i = 0; i < 3; i++) { // the reporter saw it from the second new note on
+  await ev(`${F}.cfg.revealActive = true; app.commands.executeCommandById('file-explorer:new-file'); await new Promise(r => setTimeout(r, 800)); return 1`)
+  await call('Input.insertText', { text: 'Trip' }); await sleep(150); await key(' '); await sleep(150); await call('Input.insertText', { text: 'plan' + i }); await sleep(900)
+  newNote.push(await ev(`const a = document.activeElement; return { inTitle: !!a?.closest('.inline-title, .view-header-title'), inExplorer: !!a?.closest('.workspace-leaf-content[data-type="file-explorer"]'), activeType: app.workspace.activeLeaf?.view.getViewType(), title: (document.querySelector('.workspace-leaf.mod-active .inline-title') ?? {}).textContent }`))
+}
+check('reveal on: typing a new note name with a space stays in the title (issue #1)', newNote.every((n, i) => n.inTitle && !n.inExplorer && n.activeType === 'markdown' && n.title === `Trip plan${i}`), JSON.stringify(newNote))
+const made = await ev(`const fe = app.workspace.getLeavesOfType('file-explorer')[0].view; const f = app.workspace.getActiveFile(); await new Promise(r => setTimeout(r, 300)); return { path: f?.path, active: !!document.querySelector('.nav-file-title.is-active[data-path="' + f?.path + '"]') }`)
+check('reveal on: the new note is still marked in the explorer', made.active, JSON.stringify(made))
+const feActive = await ev(`app.workspace.setActiveLeaf = __sal; return __feActive`)
+check('reveal on: opening notes never makes the file explorer the active pane (issue #1 cause)', feActive === 0, `${feActive} activations`)
+await ev(`for (const f of app.vault.getMarkdownFiles().filter(f => /^(Untitled|Trip )/.test(f.basename) && !f.path.includes('/'))) await app.vault.delete(f); return 1`)
 done()

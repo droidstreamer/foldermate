@@ -1,7 +1,7 @@
 {
   "id": "foldermate",
   "name": "FolderMate",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "minAppVersion": "1.13.0",
   "description": "Color a folder and all its subfolders in the file explorer, as text color or as fading background bands.",
   "author": "Droid",
